@@ -70,12 +70,47 @@ def izmeni_gumu(guma_id: int, response: Response, guma: schemas.UpdateGuma, db: 
     if not IzGuma.first():
         response.status_code=status.HTTP_404_NOT_FOUND
         return{"Message": f"Guma {guma_id} nije nadjena"}
+
+    if guma.vrstaGume != None:
+        IzGuma.first().vrstaGume = guma.vrstaGume
+        
+    if guma.brend != None:
+        IzGuma.first().brend = guma.brend
     
-    IzGuma.update(guma.dict())
+    if guma.sezona != None:
+        IzGuma.first().sezona = guma.sezona
+    
+    if guma.sirina != None:
+        IzGuma.first().sirina = guma.sirina
+    
+    if guma.visina != None:
+        IzGuma.first().visina = guma.visina
+   
+    if guma.precnik != None:
+        IzGuma.first().precnik = guma.precnik
+    
+    if guma.indexBrzine != None:
+        IzGuma.first().indexBrzine = guma.indexBrzine
+   
+    if guma.kolicina != None:
+        IzGuma.first().kolicina = guma.kolicina
+    
+    guma = {
+
+        "vrstaGume": IzGuma.first().vrstaGume,
+        "brend": IzGuma.first().brend,
+        "sezona": IzGuma.first().sezona,
+        "sirina": IzGuma.first().sirina,
+        "visina": IzGuma.first().visina,
+        "precnik": IzGuma.first().precnik,
+        "indexBrzine": IzGuma.first().indexBrzine,
+        "kolicina": IzGuma.first().kolicina
+    }
+
+    IzGuma.update(guma)
     db.commit()
     
     return {"message": f"Guma {guma_id} je izmenjena"}
-# izmeniti samo jedan parametar u tabeli
 
 @router.delete("/magacin/{guma_id}", tags=["magacin"])
 def izbrisi_gumu(guma_id: int, db: Session = Depends(database.get_db)):
