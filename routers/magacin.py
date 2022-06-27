@@ -22,21 +22,22 @@ def pokazi_sve_gume(db: Session = Depends(database.get_db)):
 #     SveGume = db.query(models.magacin).all()
 #     return SveGume
 
-@router.get("/magacin/pretraga")
-def pretrazi_gume(vrstaGume: Optional[str] = None, brend: Optional[str] = None, db: Session = Depends(database.get_db)):
+@router.get("/magacin/pretraga", tags=["magacin"])
+def pretrazi_gume(vrstaGume: Optional[str] = None, brend: Optional[str] = None, sezona: Optional[str] = None, sirina: Optional[str] = None, visina: Optional[str] = None,
+                    precnik: Optional[str] = None, indexBrzine: Optional[str] = None, db: Session = Depends(database.get_db)):
     
     gume = []
-    tr = db.query(models.magacin).filter(models.magacin.vrstaGume == vrstaGume).all()
-    # trr = db.query(models.magacin).filter(models.magacin.brend == brend).all()
-    print(tr[2].brend)
-    gumica = [tr[0].id, tr[0].vrstaGume, tr[0].brend, tr[0].sezona, tr[0].sirina, tr[0].visina, tr[0].precnik, tr[0].indexBrzine]
-    print(gumica)
+    tr = db.query(models.magacin).all()
     
     for guma_id in tr:
-        if tr[guma_id].vrstaGume == vrstaGume or vrstaGume == None:
-            # if trr[guma_id][brend] == brend or brend == None:
-             gume.append(tr)
-    
+        if guma_id.vrstaGume == vrstaGume or vrstaGume == None:
+            if guma_id.brend == brend or brend == None:
+                if guma_id.sezona == sezona or sezona == None:
+                    if guma_id.sirina == sirina or sirina == None:
+                        if guma_id.visina == visina or visina == None:
+                            if guma_id.precnik == precnik or precnik == None:
+                                if guma_id.indexBrzine == indexBrzine or indexBrzine == None:
+                                    gume.append(guma_id)
     return gume
     
 
