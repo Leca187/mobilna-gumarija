@@ -113,11 +113,14 @@ def izmeni_gumu(guma_id: int, response: Response, guma: schemas.UpdateGuma, db: 
     return {"message": f"Guma {guma_id} je izmenjena"}
 
 @router.delete("/magacin/{guma_id}", tags=["magacin"])
-def izbrisi_gumu(guma_id: int, db: Session = Depends(database.get_db)):
+def izbrisi_gumu(guma_id: int, response: Response, db: Session = Depends(database.get_db)):
+    
+    if db.query(models.magacin).filter(models.magacin.id == guma_id).first() not in db.query(models.magacin).all():
+        response.status_code=status.HTTP_404_NOT_FOUND
+        return{"Message": f"Guma {guma_id} ne postoji"}
     
     db.query(models.magacin).filter(models.magacin.id == guma_id).delete(synchronize_session=False)
     
     db.commit()   
 
     return {"Message": "Guma izbrisana"}
-# ako guma ne postoji error pri brisanju
