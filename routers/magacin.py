@@ -14,13 +14,20 @@ def pokazi_sve_gume(db: Session = Depends(database.get_db)):
     SveGume = db.query(models.magacin).all()
     return SveGume
 
-# POKAZI SAMO BRENDOVE !!! kako ne pokazati duplikate, __istrazi distinct__
+# POKAZI SAMO BRENDOVE BEZ DUPLIKATA !!! __istrazi distinct__
 
-# @router.get("/magacin/", response_model = List[schemas.BrendGuma], status_code=status.HTTP_200_OK)
-# def pokazi_sve_gume(db: Session = Depends(database.get_db)):
+@router.get("/magacin/brend", status_code=status.HTTP_200_OK, tags=["magacin"])
+def pokazi_sve_gume_po_brendu(db: Session = Depends(database.get_db)):
     
-#     SveGume = db.query(models.magacin).all()
-#     return SveGume
+    razGume = []
+    SveGume = db.query(models.magacin).all()
+    print(SveGume)
+
+    for brend_gume in SveGume:
+        if brend_gume.brend not in razGume:
+            razGume.append(brend_gume.brend)
+            print(brend_gume.brend)
+    return razGume
 
 @router.get("/magacin/pretraga", tags=["magacin"])
 def pretrazi_gume(vrstaGume: Optional[str] = None, brend: Optional[str] = None, sezona: Optional[str] = None, sirina: Optional[str] = None, visina: Optional[str] = None,
