@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, Response, HTTPException, Path, status
-import database, models
+import database, models, ltoken
+from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 import schemas
 from hashing import Hash
@@ -27,7 +28,7 @@ def pokazi_korisnika(korisnik_id: int, response: Response, db: Session = Depends
     return korisnik
 
 @router.post("/korisik/login")
-def login(Login:schemas.Login, response: Response, db: Session = Depends(database.get_db)):
+def login(response: Response, Login:OAuth2PasswordRequestForm = Depends(), db: Session = Depends(database.get_db)):
     
     user = db.query(models.Korisnik).filter(models.Korisnik.email == Login.username).first()
     if not user:

@@ -1,15 +1,14 @@
 from fastapi import APIRouter, Depends, Response, status
 from pip import List
-import database, models
+import database, models, schemas, oauth2
 from sqlalchemy.orm import Session
-import schemas
 from typing import Optional
 
 router = APIRouter()
 
 
 @router.get("/magacin/", status_code=status.HTTP_200_OK, tags=["magacin"])
-def pokazi_sve_gume(db: Session = Depends(database.get_db)):
+def pokazi_sve_gume(db: Session = Depends(database.get_db), get_current_user: schemas.Korisnik = Depends(oauth2.get_current_user)):
     
     SveGume = db.query(models.magacin).all()
     return SveGume
