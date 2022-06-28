@@ -1,6 +1,7 @@
 from pydantic import BaseModel
 from typing import Optional
 
+
 class Guma(BaseModel):
 
     vrstaGume: str
@@ -39,6 +40,10 @@ class PokaziKorisnika(BaseModel):
 
     ime: Optional[str] = None
     email: Optional[str] = None 
-    message: Optional[str] = None 
     class Config():
         orm_mode = True   
+
+class Login(BaseModel):
+
+    username: str
+    password: str

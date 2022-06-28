@@ -3,13 +3,14 @@ import database, models
 from sqlalchemy.orm import Session
 import schemas
 from hashing import Hash
+import token
 
 router = APIRouter()
 
 @router.post("/korisnik/", response_model = schemas.PokaziKorisnika, tags=["users"])
 def kreiraj_nalog(korisnik: schemas.Korisnik, db: Session = Depends(database.get_db)):
     
-    novi_korisnik = schemas.Korisnik(ime=korisnik.ime, email=korisnik.email, password=Hash.bcrypt(korisnik.password))
+    novi_korisnik = models.Korisnik(ime=korisnik.ime, email=korisnik.email, password=Hash.bcrypt(korisnik.password))
     db.add(novi_korisnik)
     db.commit()
     db.refresh(novi_korisnik)
@@ -24,3 +25,21 @@ def pokazi_korisnika(korisnik_id: int, response: Response, db: Session = Depends
         response.status_code=status.HTTP_404_NOT_FOUND
         return{"message": f"Korisnik {korisnik_id} nije nadjen"}
     return korisnik
+
+@router.post("/korisik/login")
+def login(Login:schemas.Login, response: Response, db: Session = Depends(database.get_db)):
+    
+    user = db.query(models.Korisnik).filter(models.Korisnik.email == Login.username).first()
+    if not user:
+        
+        response.status_code=status.HTTP_404_NOT_FOUND
+        return{"message": "Invalid username"}
+    
+    if not Hash.verify(user.password, Login.password):
+
+        response.status_code=status.HTTP_404_NOT_FOUND
+        return{"message": "Invalid password"}
+
+
+    access_token = ltoken.create_access_token(data={"sub": user.email})
+    return {"access_token": access_token, "token_type": "bearer"}
