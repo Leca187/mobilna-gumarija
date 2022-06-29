@@ -8,7 +8,7 @@ router = APIRouter()
 
 
 @router.get("/magacin/", status_code=status.HTTP_200_OK, tags=["magacin"])
-def pokazi_sve_gume(db: Session = Depends(database.get_db), get_current_user: schemas.Korisnik = Depends(oauth2.get_current_user)):
+def pokazi_sve_gume(db: Session = Depends(database.get_db)):
     
     SveGume = db.query(models.magacin).all()
     return SveGume
@@ -49,7 +49,7 @@ def pretrazi_gume(vrstaGume: Optional[str] = None, brend: Optional[str] = None, 
 
 
 @router.get("/magacin/{guma_id}", tags=["magacin"])
-def pokazi_gumu(guma_id: int, response: Response, db: Session = Depends(database.get_db)):
+def pokazi_gumu(guma_id: int, response: Response, db: Session = Depends(database.get_db), get_current_user: schemas.Korisnik = Depends(oauth2.get_current_user)):
     
     Guma = db.query(models.magacin).filter(models.magacin.id == guma_id).first()
     
@@ -59,7 +59,7 @@ def pokazi_gumu(guma_id: int, response: Response, db: Session = Depends(database
     return Guma    
 
 @router.post("/magacin/", status_code=status.HTTP_201_CREATED, tags=["magacin"])
-def kreiraj_gumu(guma: schemas.Guma, db: Session = Depends(database.get_db)):   
+def kreiraj_gumu(guma: schemas.Guma, db: Session = Depends(database.get_db), get_current_user: schemas.Korisnik = Depends(oauth2.get_current_user)):   
     
     nova_guma = models.magacin(vrstaGume=guma.vrstaGume, brend=guma.brend, sezona=guma.sezona, sirina=guma.sirina, visina=guma.visina, precnik=guma.precnik, 
                                indexBrzine=guma.indexBrzine, kolicina=guma.kolicina)
@@ -69,7 +69,7 @@ def kreiraj_gumu(guma: schemas.Guma, db: Session = Depends(database.get_db)):
     return nova_guma
 
 @router.put("/magacin/{guma_id}", status_code=status.HTTP_202_ACCEPTED, tags=["magacin"])
-def izmeni_gumu(guma_id: int, response: Response, guma: schemas.UpdateGuma, db: Session = Depends(database.get_db)):
+def izmeni_gumu(guma_id: int, response: Response, guma: schemas.UpdateGuma, db: Session = Depends(database.get_db), get_current_user: schemas.Korisnik = Depends(oauth2.get_current_user)):
     
     IzGuma = db.query(models.magacin).filter(models.magacin.id == guma_id)
     
@@ -119,7 +119,7 @@ def izmeni_gumu(guma_id: int, response: Response, guma: schemas.UpdateGuma, db: 
     return {"message": f"Guma {guma_id} je izmenjena"}
 
 @router.delete("/magacin/{guma_id}", tags=["magacin"])
-def izbrisi_gumu(guma_id: int, response: Response, db: Session = Depends(database.get_db)):
+def izbrisi_gumu(guma_id: int, response: Response, db: Session = Depends(database.get_db), get_current_user: schemas.Korisnik = Depends(oauth2.get_current_user)):
     
     if db.query(models.magacin).filter(models.magacin.id == guma_id).first() not in db.query(models.magacin).all():
         response.status_code=status.HTTP_404_NOT_FOUND

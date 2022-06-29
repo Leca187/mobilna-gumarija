@@ -27,7 +27,7 @@ def pokazi_korisnika(korisnik_id: int, response: Response, db: Session = Depends
         return{"message": f"Korisnik {korisnik_id} nije nadjen"}
     return korisnik
 
-@router.post("/korisik/login")
+@router.post("/korisik/login",tags=["login"])
 def login(response: Response, Login:OAuth2PasswordRequestForm = Depends(), db: Session = Depends(database.get_db)):
     
     user = db.query(models.Korisnik).filter(models.Korisnik.email == Login.username).first()
