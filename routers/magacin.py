@@ -8,15 +8,27 @@ router = APIRouter()
 
 
 @router.get("/magacin/", status_code=status.HTTP_200_OK, tags=["magacin"])
-def pokazi_sve_gume(db: Session = Depends(database.get_db)):
+def pokazi_gume(vrstaGume: Optional[str] = None, brend: Optional[str] = None, sezona: Optional[str] = None, sirina: Optional[str] = None, visina: Optional[str] = None,
+                    precnik: Optional[str] = None, indexBrzine: Optional[str] = None, db: Session = Depends(database.get_db)):
     
     SveGume = db.query(models.magacin).all()
-    return SveGume
-
-# POKAZI SAMO BRENDOVE BEZ DUPLIKATA !!! __istrazi distinct__
-
+    razGume = []
+    
+    for guma_id in SveGume:
+        if guma_id.vrstaGume == vrstaGume or vrstaGume == None:
+            if guma_id.brend == brend or brend == None:
+                if guma_id.sezona == sezona or sezona == None:
+                    if guma_id.sirina == sirina or sirina == None:
+                        if guma_id.visina == visina or visina == None:
+                            if guma_id.precnik == precnik or precnik == None:
+                                if guma_id.indexBrzine == indexBrzine or indexBrzine == None:
+                                    razGume.append(guma_id)
+    return razGume
+               
+    return razGume
+    
 @router.get("/magacin/brend", status_code=status.HTTP_200_OK, tags=["magacin"])
-def pokazi_sve_gume_po_brendu(db: Session = Depends(database.get_db)):
+def pokazi_sve_brendove(db: Session = Depends(database.get_db)):
     
     razGume = []
     SveGume = db.query(models.magacin).all()
@@ -27,26 +39,6 @@ def pokazi_sve_gume_po_brendu(db: Session = Depends(database.get_db)):
             razGume.append(brend_gume.brend)
             print(brend_gume.brend)
     return razGume
-
-@router.get("/magacin/pretraga", tags=["magacin"])
-def pretrazi_gume(vrstaGume: Optional[str] = None, brend: Optional[str] = None, sezona: Optional[str] = None, sirina: Optional[str] = None, visina: Optional[str] = None,
-                    precnik: Optional[str] = None, indexBrzine: Optional[str] = None, db: Session = Depends(database.get_db)):
-    
-    gume = []
-    tr = db.query(models.magacin).all()
-    
-    for guma_id in tr:
-        if guma_id.vrstaGume == vrstaGume or vrstaGume == None:
-            if guma_id.brend == brend or brend == None:
-                if guma_id.sezona == sezona or sezona == None:
-                    if guma_id.sirina == sirina or sirina == None:
-                        if guma_id.visina == visina or visina == None:
-                            if guma_id.precnik == precnik or precnik == None:
-                                if guma_id.indexBrzine == indexBrzine or indexBrzine == None:
-                                    gume.append(guma_id)
-    return gume
-    
-
 
 @router.get("/magacin/{guma_id}", tags=["magacin"])
 def pokazi_gumu(guma_id: int, response: Response, db: Session = Depends(database.get_db), get_current_user: schemas.Korisnik = Depends(oauth2.get_current_user)):
@@ -130,3 +122,5 @@ def izbrisi_gumu(guma_id: int, response: Response, db: Session = Depends(databas
     db.commit()   
 
     return {"Message": "Guma izbrisana"}
+
+# __istrazi distinct__
