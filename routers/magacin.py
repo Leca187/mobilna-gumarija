@@ -124,3 +124,4 @@ def izbrisi_gumu(guma_id: int, response: Response, db: Session = Depends(databas
     return {"Message": "Guma izbrisana"}
 
 # __istrazi distinct__
+# u postmanu testirati search sve moguce varijante i sve ostalo

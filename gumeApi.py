@@ -1,5 +1,3 @@
-# daj mi sve razlicite brendove
-# u postmanu testirati search sve moguce varijante i sve ostalo
 from fastapi import FastAPI, Depends
 import models
 from database import engine
